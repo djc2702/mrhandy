@@ -1,3 +1,4 @@
+import achewood
 import os
 import random
 import time
@@ -37,6 +38,10 @@ def handle_command(command, channel):
 		prefix = choose_polite_prefix()
 		response = prefix + " Your code word is " + codeword \
 					+ "."
+	elif command.startswith('achewood') and len(list(command.split())) == 1:
+		response = choose_polite_prefix() + achewood.get_achewood()
+	elif command.startswith('achewood') and len(list(command.split())) > 1:
+		response = choose_polite_prefix() + achewood.get_achewood(command[9:])
 	elif 'm8' in command:
 		response = "2 bloody rite m8"
 	elif 'down with the sickness' in command:
