@@ -32,15 +32,36 @@ def handle_command(command, channel):
 	if command.startswith(EXAMPLE_COMMAND):
 		response = "I've not yet been programmed to do that, sir."
 	elif command.startswith(GENERATE_COMMAND):
+		#generate a secret code phrase
 		codeword = generate_code_words()
 		prefix = choose_polite_prefix()
 		response = prefix + " Your code word is " + codeword \
 					+ "."
-	elif command.startswith(SOUNDCLOUD_COMMAND):
-		trackurl = scloud.get_random_quandary_track()
-		response = choose_polite_prefix() + trackurl
 	elif 'm8' in command:
 		response = "2 bloody rite m8"
+	elif 'down with the sickness' in command:
+		response = "Ooh wa ah ah ah, sir."
+	if command.startswith(SOUNDCLOUD_COMMAND) and 'by' in command:
+		#split the query into tokens
+		querylist = command.split()
+		# use everything after 'by' as the search term for artists
+		artist_query = querylist[querylist.index('by') + 1:]
+		# run the search method
+		result = scloud.random_track_by_user_search(' '.join(artist_query))
+		if len(result) > 1:
+			# get the artist's name
+			artist = result[1] 
+			# get the track url
+			trackurl = result[0] 
+			# set the response
+			response = choose_polite_prefix() + ' Playing a song by ' + \
+			artist + '. \n' + trackurl
+		else:
+			response = result[0]
+	elif command.startswith(SOUNDCLOUD_COMMAND) and 'by' not in command:
+		# get a random track by dr quandary
+		trackurl = scloud.get_random_quandary_track()
+		response = choose_polite_prefix() + trackurl
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)	
 
