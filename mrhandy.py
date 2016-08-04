@@ -5,6 +5,9 @@ import time
 import scloud
 from slackclient import SlackClient
 
+### TO DO
+### Use dictionaries to hold commands ?
+
 #starterbot's id as an environment variable
 BOT_ID = os.environ.get("STARTER_BOT_ID")
 
@@ -18,8 +21,6 @@ SOUNDCLOUD_COMMAND = "play"
 
 #instantiate slack and twilio clients
 slack_client = SlackClient(os.environ.get('STARTER_BOT_TOKEN'))
-
-
 
 
 def handle_command(command, channel):
@@ -38,14 +39,12 @@ def handle_command(command, channel):
 		prefix = choose_polite_prefix()
 		response = prefix + " Your code word is " + codeword \
 					+ "."
-	elif command.startswith('achewood') and len(list(command.split())) == 1:
+	elif 'achewood' in command and '"' not in command:
 		response = choose_polite_prefix() + '\n' \
 		+ achewood.get_achewood()
 	elif 'achewood' in command and '"' in command:
 		response = choose_polite_prefix() + '\n' \
 		+ achewood.get_achewood(command[command.find('"'):command.rfind('"')])
-	elif 'm8' in command:
-		response = "2 bloody rite m8"
 	elif 'down with the sickness' in command:
 		response = "Ooh wa ah ah ah, sir."
 	if command.startswith(SOUNDCLOUD_COMMAND) and 'by' in command:
@@ -69,6 +68,8 @@ def handle_command(command, channel):
 		# get a random track by dr quandary
 		trackurl = scloud.get_random_quandary_track()
 		response = choose_polite_prefix() + trackurl
+	if 'm8' in command:
+		response = response.replace('sir', 'm8').replace('you', 'u').replace('too', '2')
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)	
 
