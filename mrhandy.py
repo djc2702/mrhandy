@@ -39,9 +39,11 @@ def handle_command(command, channel):
 		response = prefix + " Your code word is " + codeword \
 					+ "."
 	elif command.startswith('achewood') and len(list(command.split())) == 1:
-		response = choose_polite_prefix() + achewood.get_achewood()
-	elif command.startswith('achewood') and len(list(command.split())) > 1:
-		response = choose_polite_prefix() + achewood.get_achewood(command[9:])
+		response = choose_polite_prefix() + '\n' \
+		+ achewood.get_achewood()
+	elif 'achewood' in command and '"' in command:
+		response = choose_polite_prefix() + '\n' \
+		+ achewood.get_achewood(command[command.find('"'):command.rfind('"')])
 	elif 'm8' in command:
 		response = "2 bloody rite m8"
 	elif 'down with the sickness' in command:

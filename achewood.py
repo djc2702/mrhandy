@@ -13,6 +13,7 @@ def get_achewood(*arg):
 	else:
 		# if there's a search term, first turn it into a searchable string
 		search = ' '.join(arg)
+		search = search.replace('"', '')
 		search = quote(search)
 		# run the search with ohnorobot
 		searchpage = urllib.request.urlopen('http://www.ohnorobot.com/index.php?s=' \
