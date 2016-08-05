@@ -18,7 +18,8 @@ AT_BOT = "<@" + BOT_ID + ">:"
 slack_client = SlackClient(os.environ.get('STARTER_BOT_TOKEN'))
 
 #list of available ability objects
-ability_list = [bot_ability.Generator, bot_ability.HelpDisplay]
+ability_list = [bot_ability.Generator, bot_ability.ComicPost, 
+				bot_ability.HelpDisplay]
 
 #empty dict of command names and their objects
 command_dict = {}
@@ -38,7 +39,7 @@ def handle_command(command, channel):
 			# if the command is 'help', call the help display class method
 			# have to pass the list of bot ability objects in this version 
 			# this is not optimal and needs to be fixed
-			response = choose_polite_prefix() + ' ' + \
+			response = choose_polite_prefix() + '\n' + \
 						   bot_function.initialize_action(command, \
 						   								  list(command_dict.values()))
 			break
