@@ -13,7 +13,7 @@ def get_random_track():
 	return playtrack
 
 def get_tasty_groove():
-	tracks = client.get('/tracks', genres='afrobeat')
+	tracks = client.get('/tracks', genres='funk')
 	random_track = random.randint(0, (len(tracks) - 1))
 	playtrack = tracks[random_track].permalink_url
 	return playtrack

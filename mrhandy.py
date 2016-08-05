@@ -31,7 +31,7 @@ def handle_command(command, channel):
 		If not, returns back what it needs for clarification.
 	"""
 	response = "I'm not sure what you mean, sir."
-	if command.startswith(GENERATE_COMMAND):
+	if 'code word' or 'codeword' in command:
 		#generate a secret code phrase
 		codeword = generate_code_words()
 		prefix = choose_polite_prefix()
