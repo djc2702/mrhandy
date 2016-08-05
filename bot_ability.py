@@ -3,22 +3,16 @@ import os
 import random
 
 
-
+## Class for the generator bot function
 class Generator():
 
 	command_name = 'generate'
-	# command_keywords = ['generate', 'code']
-	# command_helptext = "`Generate code phrases:` use the " \
-	# 					"keywords 'generate' and 'code' to generate" \
-	# 					"top-secret code phrases."
-	# command_manpage = "To be implemented later."
 
 	def __init__(self):
-		# self.command_name = 'generate'
 		self.command_keywords = ['generate', 'code']
 		self.command_helptext = "`Generate code phrases:` use the " \
-								"keywords 'generate' and 'code' to generate" \
-								"top-secret code phrases. TO DO: expand to generate" \
+								"keywords 'generate' and 'code' to generate " \
+								"top-secret code phrases. *TO DO:* expand to generate " \
 								"names, etc."
 		self.command_manpage = "To be implemented later."
 
@@ -58,3 +52,18 @@ class Generator():
 			return firstword + ' ' + secondword
 		else:
 			return firstword + ' ' + secondword + ' ' + thirdword
+
+class HelpDisplay():
+
+	command_name = 'help'
+
+	def __init__(self):
+		self.command_kewyords = 'help'
+		self.command_helptext = "`Help:` displays information on available commands."
+		self.command_manpage = "To be implemented later."
+
+	def initialize_action(self, command, ability_list):
+		response = ''
+		for item in ability_list:
+			response += item.command_helptext + '\n'
+		return response

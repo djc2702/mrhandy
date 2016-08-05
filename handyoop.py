@@ -18,7 +18,7 @@ AT_BOT = "<@" + BOT_ID + ">:"
 slack_client = SlackClient(os.environ.get('STARTER_BOT_TOKEN'))
 
 #list of available ability objects
-ability_list = [bot_ability.Generator]
+ability_list = [bot_ability.Generator, bot_ability.HelpDisplay]
 
 #empty dict of command names and their objects
 command_dict = {}
@@ -27,10 +27,16 @@ command_dict = {}
 for ability in ability_list:
 	command_dict[ability.command_name] = ability()
 
-print(list(command_dict.keys()))
+	
 def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
 	for word in list(command_dict.keys()):
+		if word in command and word == 'help':
+			bot_function = command_dict.get(word)
+			response = choose_polite_prefix() + ' ' + \
+						   bot_function.initialize_action(command, \
+						   								  list(command_dict.values()))
+			break
 		if word in command:
 			bot_function = command_dict.get(word)
 			if all(keywords in command for keywords in bot_function.command_keywords):
