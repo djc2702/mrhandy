@@ -68,6 +68,16 @@ def handle_command(command, channel):
 	elif 'kick it' in command:
 		trackurl = scloud.get_tasty_groove()
 		response = "I shall kick it with a tasty groove, sir. " + '\n' + trackurl
+	elif "who" in command and "the nerd" in command:
+		#basic who is the nerd support
+		chance = random.randint(0,100)
+		if chance >= 98:
+			response = "Shaquille O'Neal is the nerd now, sir."
+		else:
+			users = list(slack_client.api_call("users.list").get('members'))
+			the_nerd = users[random.randint(0, len(users) - 1)].get('real_name')
+			response = the_nerd + " is the nerd now, sir."
+
 	if 'm8' in command:
 		response = response.replace('sir', 'm8').replace('you', 'u').replace('too', '2').replace('right', 'rite')
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
