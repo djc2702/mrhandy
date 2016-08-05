@@ -9,6 +9,7 @@ from slackclient import SlackClient
 ### Use dictionaries to hold commands, and for help/instructions
 ### full width mode
 ### kick it with a dope verse / drop fire bars
+### say who the nerd is
 
 #starterbot's id as an environment variable
 BOT_ID = os.environ.get("STARTER_BOT_ID")
@@ -31,7 +32,7 @@ def handle_command(command, channel):
 		If not, returns back what it needs for clarification.
 	"""
 	response = "I'm not sure what you mean, sir."
-	if 'code word' or 'codeword' in command:
+	if 'code word' in command or 'codeword' in command:
 		#generate a secret code phrase
 		codeword = generate_code_words()
 		prefix = choose_polite_prefix()
