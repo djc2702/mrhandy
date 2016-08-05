@@ -133,7 +133,7 @@ def generate_code_words():
 if __name__ == "__main__":
 	READ_WEBSOCKET_DELAY = 1 # one second delay between reading from firehose
 	if slack_client.rtm_connect():
-		print("StarterBot connected and running!")
+		print("Mr. Handy is connected and running!")
 		while True:
 			command, channel = parse_slack_output(slack_client.rtm_read())
 			if command and channel:
