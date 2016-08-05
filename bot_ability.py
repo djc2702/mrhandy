@@ -53,6 +53,7 @@ class Generator():
 		else:
 			return firstword + ' ' + secondword + ' ' + thirdword
 
+# Class for the help display function
 class HelpDisplay():
 
 	command_name = 'help'

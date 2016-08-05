@@ -27,22 +27,32 @@ command_dict = {}
 for ability in ability_list:
 	command_dict[ability.command_name] = ability()
 
-	
+
 def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
+	# for every word in the command list...
 	for word in list(command_dict.keys()):
+		# first see if the word is 'help'
 		if word in command and word == 'help':
 			bot_function = command_dict.get(word)
+			# if the command is 'help', call the help display class method
+			# have to pass the list of bot ability objects in this version 
+			# this is not optimal and needs to be fixed
 			response = choose_polite_prefix() + ' ' + \
 						   bot_function.initialize_action(command, \
 						   								  list(command_dict.values()))
 			break
+		# if the command isn't 'help', but is in the command...
 		if word in command:
 			bot_function = command_dict.get(word)
+			# if the command contains all the necessary keywords, call the relevant 
+			# method.
+			# this is not ideal and will get fixed to be less ugly
 			if all(keywords in command for keywords in bot_function.command_keywords):
 				response = choose_polite_prefix() + ' ' + \
 						   bot_function.initialize_action(command)
 				break
+	# Post the message using the client api
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)
 
