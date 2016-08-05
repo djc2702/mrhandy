@@ -6,9 +6,14 @@ import soundcloud
 client = soundcloud.Client(client_id = os.environ.get("SOUNDCLOUD_CLIENT_ID"))
 
 # get a random track by doc quan
-def get_random_quandary_track():
-	tracks = client.get('/users/187896/tracks')
-	playtrack = tracks[1].permalink_url
+def get_random_track():
+	tracks = client.get('/tracks', genres='reggaeton')
+	random_track = random.randint(0, (len(tracks) - 1))
+	playtrack = tracks[random_track].permalink_url
+	return playtrack
+
+def get_tasty_groove():
+	tracks = client.get('/tracks', genres='afrobeat')
 	random_track = random.randint(0, (len(tracks) - 1))
 	playtrack = tracks[random_track].permalink_url
 	return playtrack
@@ -17,6 +22,7 @@ def get_random_quandary_track():
 def random_track_by_user_search(artist_name):
 	# search for the artist name
 	users = client.get('/users', q=artist_name)
+
 	if len(users) != 0:
 		#helper variables
 		index = 0

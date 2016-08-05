@@ -6,7 +6,9 @@ import scloud
 from slackclient import SlackClient
 
 ### TO DO
-### Use dictionaries to hold commands ?
+### Use dictionaries to hold commands, and for help/instructions
+### full width mode
+### kick it with a dope verse / drop fire bars
 
 #starterbot's id as an environment variable
 BOT_ID = os.environ.get("STARTER_BOT_ID")
@@ -14,7 +16,6 @@ BOT_ID = os.environ.get("STARTER_BOT_ID")
 #constants
 AT_BOT = "<@" + BOT_ID + ">:"
 AT_BOT_COLON = "<@" + BOT_ID + ">:"
-EXAMPLE_COMMAND = "do"
 GENERATE_COMMAND = "generate"
 SOUNDCLOUD_COMMAND = "play"
 
@@ -29,11 +30,8 @@ def handle_command(command, channel):
 		are valid commands. If so, then acts on the commands. 
 		If not, returns back what it needs for clarification.
 	"""
-	response = "I'm not sure what you mean, sir. Use the *" + EXAMPLE_COMMAND + \
-				"* command with numbers, delimited by spaces, if you please."
-	if command.startswith(EXAMPLE_COMMAND):
-		response = "I've not yet been programmed to do that, sir."
-	elif command.startswith(GENERATE_COMMAND):
+	response = "I'm not sure what you mean, sir."
+	if command.startswith(GENERATE_COMMAND):
 		#generate a secret code phrase
 		codeword = generate_code_words()
 		prefix = choose_polite_prefix()
@@ -47,13 +45,11 @@ def handle_command(command, channel):
 		+ achewood.get_achewood(command[command.find('"'):command.rfind('"')])
 	elif 'down with the sickness' in command:
 		response = "Ooh wa ah ah ah, sir."
-	if command.startswith(SOUNDCLOUD_COMMAND) and 'by' in command:
-		#split the query into tokens
-		querylist = command.split()
-		# use everything after 'by' as the search term for artists
-		artist_query = querylist[querylist.index('by') + 1:]
+	elif SOUNDCLOUD_COMMAND in command and 'by' in command:
+		# 
+		artist_query = command[command.find('"') + 1:command.rfind('"')]
 		# run the search method
-		result = scloud.random_track_by_user_search(' '.join(artist_query))
+		result = scloud.random_track_by_user_search(artist_query)
 		if len(result) > 1:
 			# get the artist's name
 			artist = result[1] 
@@ -64,12 +60,15 @@ def handle_command(command, channel):
 			artist + '. \n' + trackurl
 		else:
 			response = result[0]
-	elif command.startswith(SOUNDCLOUD_COMMAND) and 'by' not in command:
-		# get a random track by dr quandary
-		trackurl = scloud.get_random_quandary_track()
-		response = choose_polite_prefix() + trackurl
+	elif SOUNDCLOUD_COMMAND in command and 'by' not in command:
+		# get a random track 
+		trackurl = scloud.get_random_track()
+		response = choose_polite_prefix() + '\n' + trackurl
+	elif 'kick it' in command:
+		trackurl = scloud.get_tasty_groove()
+		response = "I shall kick it with a tasty groove, sir. " + '\n' + trackurl
 	if 'm8' in command:
-		response = response.replace('sir', 'm8').replace('you', 'u').replace('too', '2')
+		response = response.replace('sir', 'm8').replace('you', 'u').replace('too', '2').replace('right', 'rite')
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)	
 
