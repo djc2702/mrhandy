@@ -21,12 +21,13 @@ slack_client = SlackClient(os.environ.get('STARTER_BOT_TOKEN'))
 ability_list = [bot_ability.Generator]
 
 #empty dict of command names and their objects
-command_dict = {'generate':bot_ability.Generator()}
+command_dict = {}
 
+#populate the dictionary with the ability names and their instances
+for ability in ability_list:
+	command_dict[ability.command_name] = ability()
 
-
-
-
+print(list(command_dict.keys()))
 def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
 	for word in list(command_dict.keys()):
