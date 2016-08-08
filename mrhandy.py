@@ -16,7 +16,6 @@ BOT_ID = os.environ.get("STARTER_BOT_ID")
 
 #constants
 AT_BOT = "<@" + BOT_ID + ">:"
-AT_BOT_COLON = "<@" + BOT_ID + ">:"
 GENERATE_COMMAND = "generate"
 SOUNDCLOUD_COMMAND = "play"
 
