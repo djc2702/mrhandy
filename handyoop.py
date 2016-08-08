@@ -1,9 +1,8 @@
-import achewood
+import inspect
 import bot_ability
 import os
 import random
 import time
-import scloud
 from slackclient import SlackClient
 
 ### OOP rewrite of mrhandy slackbot
@@ -17,9 +16,9 @@ AT_BOT = "<@" + BOT_ID + ">:"
 #instantiate slack and twilio clients
 slack_client = SlackClient(os.environ.get('STARTER_BOT_TOKEN'))
 
-#list of available ability objects
-ability_list = [bot_ability.Generator, bot_ability.ComicPost, 
-				bot_ability.HelpDisplay]
+#list of available ability objects, received using reflection to inspect
+# the bot_ability module for classes
+ability_list = [x[1] for x in inspect.getmembers(bot_ability, inspect.isclass)]
 
 #empty dict of command names and their objects
 command_dict = {}
@@ -33,17 +32,6 @@ def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
 	# for every word in the command list...
 	for word in list(command_dict.keys()):
-		# first see if the word is 'help'
-		if word in command and word == 'help':
-			bot_function = command_dict.get(word)
-			# if the command is 'help', call the help display class method
-			# have to pass the list of bot ability objects in this version 
-			# this is not optimal and needs to be fixed
-			response = choose_polite_prefix() + '\n' + \
-						   bot_function.initialize_action(command, \
-						   								  list(command_dict.values()))
-			break
-		# if the command isn't 'help', but is in the command...
 		if word in command:
 			bot_function = command_dict.get(word)
 			# if the command contains all the necessary keywords, call the relevant 
