@@ -30,17 +30,18 @@ for ability in ability_list:
 
 def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
-	# for every word in the command list...
+	# for every word in the command list... 
 	for word in list(command_dict.keys()):
 		if word in command:
 			bot_function = command_dict.get(word)
-			# if the command contains all the necessary keywords, call the relevant 
-			# method.
-			# this is not ideal and will get fixed to be less ugly
-			if all(keywords in command for keywords in bot_function.command_keywords):
-				response = choose_polite_prefix() + ' ' + \
-						   bot_function.initialize_action(command)
-				break
+			# get the response by calling the relevant bot function's 
+			# 'initialize action' method
+			response = choose_polite_prefix() + ' ' + \
+					   bot_function.initialize_action(command)
+			break
+	# check for m8 status
+	if 'm8' in command:
+		response = response.replace('sir', 'm8').replace('you', 'u').replace('too', '2').replace('right', 'rite')
 	# Post the message using the client api
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)

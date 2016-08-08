@@ -3,6 +3,7 @@ import inspect
 import lxml.html
 import os
 import random
+import soundcloud
 import urllib.request
 from urllib.parse import quote
 
@@ -12,6 +13,9 @@ from urllib.parse import quote
 ### - kick it with a dope verse / drop fire bars
 ### - certified hot flames / hot fire
 
+
+# instantiate a soundcloud client
+client = soundcloud.Client(client_id = os.environ.get("SOUNDCLOUD_CLIENT_ID"))
 
 class ComicPost():
 
@@ -67,15 +71,12 @@ class ComicPost():
 class Generator():
 
 	command_name = 'generate'
-	command_keywords = ['generate', 'code']
+	command_keywords = ['generate']
 	command_helptext = "`Generate code phrases:` use the " \
 								"keywords 'generate' and 'code' to generate " \
 								"top-secret code phrases. *TO DO:* expand to generate " \
 								"names, etc."
 	command_manpage = "To be implemented later."
-
-	def __init__(self):
-		pass
 
 	def initialize_action(self, command):
 		
@@ -120,18 +121,49 @@ class HelpDisplay():
 	command_helptext = "`Help:` displays information on available commands."
 	command_manpage = "To be implemented later."
 
-
-	def __init__(self):
-		pass
-
 	def initialize_action(self, command):
 		# use reflection to get list of classes in this module
 		ability_objects = [x[1] for x in inspect.getmembers(bot_ability, inspect.isclass)]
-		response = ''
+		response = []
 		# for each item, add its helptext to the response
 		for item in ability_objects:
-			response += item.command_helptext + '\n'
-		return response
+			response.append(item.command_helptext)
+		response = sorted(response)
+		return '\n'.join(response)
 
 
+class NerdAlert():
 
+	command_name = 'nerd'
+	command_keywords = ['who', 'the nerd']
+	command_helptext = "`Who's the nerd:` tells the channel who the nerd currently is." \
+					   " *TO DO:* Build the Nerd Accumulator and SCoring Algorithm Response" \
+					   " (N.A.S.C.A.R.)"
+
+	def initialize_action(self, command):
+		#basic who is the nerd support
+		chance = random.randint(0,100)
+		if chance >= 98:
+			the_nerd = "Shaquille O'Neal is the nerd now, sir."
+		else:
+			## fix later eg make work
+			# users = list(slack_client.api_call("users.list").get('members'))
+			# the_nerd = users[random.randint(0, len(users) - 1)].get('real_name')
+			the_nerd = "Kyle Tierce"
+			return the_nerd + " is the nerd now, sir."
+
+
+class SoundCloud():
+
+	##need to fix these
+	command_name = 'kick it'
+	command_keywords = ['kick it']
+	command_helptext = "`Kick it:` Kick it with a tasty groove. "\
+						"*TO DO:* Make... better. "
+	command_manpage = 'To be implemented later.'
+
+	def initialize_action(self, command):
+		tracks = client.get('/playlists/46223708/tracks')
+		random_track = random.randint(0, (len(tracks) - 1))
+		playtrack = tracks[random_track].permalink_url
+		return playtrack
