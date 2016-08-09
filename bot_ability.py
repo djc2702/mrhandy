@@ -1,4 +1,5 @@
 import bot_ability
+import handyoop
 import inspect
 import lxml.html
 import os
@@ -17,6 +18,10 @@ from urllib.parse import quote
 # instantiate a soundcloud client
 client = soundcloud.Client(client_id = os.environ.get("SOUNDCLOUD_CLIENT_ID"))
 
+#get the slack client from the main bot module
+slack_client = handyoop.get_slack_client()
+
+
 class ComicPost():
 
 	#change this once we have more comics, if ever
@@ -34,7 +39,7 @@ class ComicPost():
 			response = self.get_achewood()
 		elif 'achewood' in command and '"' in command:
 			response = self.get_achewood(command[command.find('"'):command.rfind('"')])
-		return response
+		return bot_ability.choose_polite_prefix() + ' ' + response
 
 	def get_achewood(self, *arg):
 		# If no search argument is supplied, grab a random strip using urllib and lxml
@@ -81,7 +86,8 @@ class Generator():
 	def initialize_action(self, command):
 		
 		codephrase = self.generate_codephrase()
-		return "Your code phrase is " + codephrase + "."
+		return bot_ability.choose_polite_prefix() + ' ' + \
+			   "Your code phrase is " + codephrase + "."
 
 	# Generate codephrase.
 	def generate_codephrase(self):
@@ -118,7 +124,7 @@ class HelpDisplay():
 
 	command_name = 'help'
 	command_keywords = ['help']
-	command_helptext = "`Help:` displays information on available commands."
+	command_helptext = "`Help:` Displays information on available commands."
 	command_manpage = "To be implemented later."
 
 	def initialize_action(self, command):
@@ -136,7 +142,7 @@ class NerdAlert():
 
 	command_name = 'nerd'
 	command_keywords = ['who', 'the nerd']
-	command_helptext = "`Who's the nerd:` tells the channel who the nerd currently is." \
+	command_helptext = "`Who's the nerd:` Tells the channel who the nerd currently is. " \
 					   " *TO DO:* Build the Nerd Accumulator and SCoring Algorithm Response" \
 					   " (N.A.S.C.A.R.)"
 
@@ -146,11 +152,33 @@ class NerdAlert():
 		if chance >= 98:
 			the_nerd = "Shaquille O'Neal is the nerd now, sir."
 		else:
-			## fix later eg make work
-			# users = list(slack_client.api_call("users.list").get('members'))
-			# the_nerd = users[random.randint(0, len(users) - 1)].get('real_name')
-			the_nerd = "Kyle Tierce"
-			return the_nerd + " is the nerd now, sir."
+			users = list(slack_client.api_call("users.list").get('members'))
+			the_nerd = users[random.randint(0, len(users) - 1)].get('real_name')
+			if the_nerd == 'Mr. Handy':
+				return "It would appear I am the nerd now, sir, although I must say "\
+						"I'm not pleased with the notion."
+			else:
+				return the_nerd + " is the nerd now, sir."
+
+
+class OminousMode():
+
+	command_name = 'ominous'
+	command_keywords = ['make', 'ominous']
+	command_helptext = '`Make ominous:` Make "text in quotes" very ominous.'
+	command_manpage = 'To be implemented later.'
+
+	def initialize_action(self, command):
+		normal_text = command[command.find('"') + 1:command.rfind('"')]
+
+		ominous_text = ""
+		for c in normal_text:
+			if c == ' ':
+				ominous_text += "  "
+			else:
+				ominous_text += chr(0xFEE0 + ord(c))
+		return ominous_text
+
 
 
 class SoundCloud():
@@ -166,4 +194,12 @@ class SoundCloud():
 		tracks = client.get('/playlists/46223708/tracks')
 		random_track = random.randint(0, (len(tracks) - 1))
 		playtrack = tracks[random_track].permalink_url
-		return playtrack
+		return bot_ability.choose_polite_prefix() + ' ' + playtrack
+
+
+# Pick a polite prefix.
+def choose_polite_prefix():
+	prefix_list = open(os.path.join(
+					   os.path.curdir, 'files', 'polite_prefixes.txt')) \
+					   .readlines()
+	return prefix_list[random.randint(0, len(prefix_list) - 1)]

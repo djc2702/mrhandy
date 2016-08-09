@@ -36,8 +36,7 @@ def handle_command(command, channel):
 			bot_function = command_dict.get(word)
 			# get the response by calling the relevant bot function's 
 			# 'initialize action' method
-			response = choose_polite_prefix() + ' ' + \
-					   bot_function.initialize_action(command)
+			response = bot_function.initialize_action(command)
 			break
 	# check for m8 status
 	if 'm8' in command:
@@ -46,13 +45,9 @@ def handle_command(command, channel):
 	slack_client.api_call("chat.postMessage", channel=channel, text=response,
 		as_user=True)
 
-
-# Pick a polite prefix.
-def choose_polite_prefix():
-	prefix_list = open(os.path.join(
-					   os.path.curdir, 'files', 'polite_prefixes.txt')) \
-					   .readlines()
-	return prefix_list[random.randint(0, len(prefix_list) - 1)]
+# getter method for the bot_ability module
+def get_slack_client():
+	return slack_client
 
 
 def parse_slack_output(slack_rtm_output):
