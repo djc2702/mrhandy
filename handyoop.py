@@ -32,7 +32,7 @@ def handle_command(command, channel):
 	response = "I'm not sure what you mean, sir."
 	# for every word in the command list... 
 	for word in list(command_dict.keys()):
-		if word in command:
+		if word in command.lower():
 			bot_function = command_dict.get(word)
 			# get the response by calling the relevant bot function's 
 			# 'initialize action' method
@@ -61,7 +61,7 @@ def parse_slack_output(slack_rtm_output):
 		for output in output_list:
 			if output and 'text' in output and AT_BOT in output['text']:
 				#return text after the @ mention, whitespace removed
-				return output['text'].split(AT_BOT)[1].strip().lower(), \
+				return output['text'].split(AT_BOT)[1].strip(), \
 					   output['channel']
 	return None, None
 

@@ -30,14 +30,11 @@ class ComicPost():
 	command_helptext = '`Achewood:` Post a random Achewood strip, or '\
 								'search for strip containing "dialog in quotes."'
 	command_manpage = "To be implemented later."
-
-	def __init__(self):
-		pass
 	
 	def initialize_action(self, command):
-		if 'achewood' in command and '"' not in command:
+		if '"' not in command:
 			response = self.get_achewood()
-		elif 'achewood' in command and '"' in command:
+		elif '"' in command:
 			response = self.get_achewood(command[command.find('"'):command.rfind('"')])
 		return bot_ability.choose_polite_prefix() + ' ' + response
 
@@ -176,14 +173,15 @@ class OminousMode():
 			if c == ' ':
 				ominous_text += "  "
 			else:
+				# Get the full-width unicode text equivalent of the character
 				ominous_text += chr(0xFEE0 + ord(c))
 		return ominous_text
 
 
-
+# Class for the soundcloud music retriever
 class SoundCloud():
 
-	##need to fix these
+	##need to make this better
 	command_name = 'kick it'
 	command_keywords = ['kick it']
 	command_helptext = "`Kick it:` Kick it with a tasty groove. "\
