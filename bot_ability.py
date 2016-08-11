@@ -77,28 +77,32 @@ class DiceRoller():
 	command_manpage = "To be implemented later."
 
 	def initialize_action(self, command):
-		#  a list of the digit groups in the command using a regular expression
-		digits = re.findall("[0-9]{1,3}", command)
-		# break the list down into number of dice...
-		dice_no = digits[0]
-		# and the type (ie sides) of the dice
-		dice_type = digits[1]
-		response = "Rolling " + dice_no + "d" + dice_type + ": "
-		result_list = []
-		# for number of dice to roll...
-		for i in range(int(dice_no)):
-			# roll the y-sided die
-			roll = random.randint(1, int(dice_type))
-			# append it to the result list for summing the total
-			result_list.append(roll)
-			# append it to the response string
-			response += str(roll)
-			# as long as it's not the last die being rolled, also append a comma
-			if  i != int(dice_no) - 1:
-				response += ", "
-		# return the response and the total
-		return bot_ability.choose_polite_prefix() + \
-			   response + " = " + str(sum(result_list))
+		# make sure the command matches the necessary pattern
+		if len(re.findall("[0-9]{1,3}", command)) != 0:
+			#  a list of the digit groups in the command using a regular expression
+			digits = re.findall("[0-9]{1,3}", command)
+			# break the list down into number of dice...
+			dice_no = digits[0]
+			# and the type (ie sides) of the dice
+			dice_type = digits[1]
+			response = "Rolling " + dice_no + "d" + dice_type + ": "
+			result_list = []
+			# for number of dice to roll...
+			for i in range(int(dice_no)):
+				# roll the y-sided die
+				roll = random.randint(1, int(dice_type))
+				# append it to the result list for summing the total
+				result_list.append(roll)
+				# append it to the response string
+				response += str(roll)
+				# as long as it's not the last die being rolled, also append a comma
+				if  i != int(dice_no) - 1:
+					response += ", "
+			# return the response and the total
+			return bot_ability.choose_polite_prefix() + \
+				   response + " = " + str(sum(result_list))
+		else:
+			return "Terribly sorry, sir, but that is an incorrect command."
  
 
 ## Class for the generator bot function
