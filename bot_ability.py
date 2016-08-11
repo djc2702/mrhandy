@@ -1,9 +1,10 @@
 import bot_ability
-import handyoop
+import mrhandy
 import inspect
 import lxml.html
 import os
 import random
+import re
 import soundcloud
 import urllib.request
 from urllib.parse import quote
@@ -19,7 +20,7 @@ from urllib.parse import quote
 client = soundcloud.Client(client_id = os.environ.get("SOUNDCLOUD_CLIENT_ID"))
 
 #get the slack client from the main bot module
-slack_client = handyoop.get_slack_client()
+slack_client = mrhandy.get_slack_client()
 
 
 class ComicPost():
@@ -68,6 +69,37 @@ class ComicPost():
 				return 'http://www.achewood.com' + imgurl[1]
 
 
+class DiceRoller():
+	command_name = 'roll'
+	command_keywords = ['roll']
+	command_helptext = '`Roll:` Use `Roll XdY` to roll dice, where X is the number' \
+					   "of dice and Y is the type of dice, e.g. `roll 2d10`."
+	command_manpage = "To be implemented later."
+
+	def initialize_action(self, command):
+		#  a list of the digit groups in the command using a regular expression
+		digits = re.findall("[0-9]{1,3}", command)
+		# break the list down into number of dice...
+		dice_no = digits[0]
+		# and the type (ie sides) of the dice
+		dice_type = digits[1]
+		response = "Rolling " + dice_no + "d" + dice_type + ": "
+		result_list = []
+		# for number of dice to roll...
+		for i in range(int(dice_no)):
+			# roll the y-sided die
+			roll = random.randint(1, int(dice_type))
+			# append it to the result list for summing the total
+			result_list.append(roll)
+			# append it to the response string
+			response += str(roll)
+			# as long as it's not the last die being rolled, also append a comma
+			if  i != int(dice_no) - 1:
+				response += ", "
+		# return the response and the total
+		return bot_ability.choose_polite_prefix() + \
+			   response + " = " + str(sum(result_list))
+
 
 ## Class for the generator bot function
 class Generator():
@@ -75,7 +107,7 @@ class Generator():
 	command_name = 'generate'
 	command_keywords = ['generate']
 	command_helptext = "`Generate code phrases:` use the " \
-								"keywords 'generate' and 'code' to generate " \
+								"keywords `generate` and `code` to generate " \
 								"top-secret code phrases. *TO DO:* expand to generate " \
 								"names, etc."
 	command_manpage = "To be implemented later."
@@ -139,7 +171,7 @@ class NerdAlert():
 
 	command_name = 'nerd'
 	command_keywords = ['who', 'the nerd']
-	command_helptext = "`Who's the nerd:` Tells the channel who the nerd currently is. " \
+	command_helptext = "`Who's the nerd:` Ask who the nerd currently is. " \
 					   " *TO DO:* Build the Nerd Accumulator and SCoring Algorithm Response" \
 					   " (N.A.S.C.A.R.)"
 
@@ -162,7 +194,7 @@ class OminousMode():
 
 	command_name = 'ominous'
 	command_keywords = ['make', 'ominous']
-	command_helptext = '`Make ominous:` Make "text in quotes" very ominous.'
+	command_helptext = '`Make "text" ominous:` Make text very ominous.'
 	command_manpage = 'To be implemented later.'
 
 	def initialize_action(self, command):
