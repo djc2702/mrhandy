@@ -99,7 +99,7 @@ class DiceRoller():
 		# return the response and the total
 		return bot_ability.choose_polite_prefix() + \
 			   response + " = " + str(sum(result_list))
-
+ 
 
 ## Class for the generator bot function
 class Generator():
