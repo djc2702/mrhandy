@@ -14,6 +14,8 @@ from urllib.parse import quote
 ### - full width mode
 ### - kick it with a dope verse / drop fire bars
 ### - certified hot flames / hot fire
+### - jargon file random entry getter
+### - 
 
 
 # instantiate a soundcloud client
@@ -72,11 +74,44 @@ class ComicPost():
 class DiceRoller():
 	command_name = 'roll'
 	command_keywords = ['roll']
-	command_helptext = '`Roll:` Use `Roll XdY` to roll dice, where X is the number' \
-					   "of dice and Y is the type of dice, e.g. `roll 2d10`."
+	command_helptext = '`Roll:` Use `Roll XdY` to roll dice, where X is the number ' \
+					   "of dice and Y is the type of dice, e.g. `roll 2d10`. " \
+					   "Or, use `Roll X [color] <Y [color] ...>` to roll Star Wars: " \
+					   "Edge of the Empire dice. This will definitely crash if you " \
+					   "don't use exactly right syntax. E.g. `roll 1 purple 1 yellow`"
 	command_manpage = "To be implemented later."
 
+	def __init__(self):
+		self.edge_dice = {'blue':['blank','blank','advantages','successes',\
+						  'successes, advantages','advantages, advantages'],
+						   'black':['blank','blank','threats','threats', \
+						   'failures','failures'],
+						   'purple':['blank','threats','threats','threats', \
+						   'failures', 'threats, failures', 'threats, threats',\
+						   'failures, failures'],
+						   'green':['blank','successes', 'successes', 'advantages', \
+						   'advantages', 'successes, advantages', 'successes, successes', \
+						   'advantages, advantages'],
+						   'yellow':['blank','advantages','successes','successes',\
+						   'advantages, advantages', 'advantages, advantages', \
+						   'successes, advantages', 'successes, advantages', \
+						   'successes, advantages', 'successes, successes', \
+						   'successes, successes', 'triumphs'],
+						   'red':['blank', 'threats', 'threats', 'failures', 'failures', \
+						   'threats, threats', 'threats, threats', 'threats, failures', \
+						   'threats, failures', 'failures, failures', 'failures, failures', \
+						   'despairs']}
+
 	def initialize_action(self, command):
+
+		# check if command wants standard dice or star wars dice
+		if (re.search('[0-9]{1,3}d[0-9]{1,3}', command)):
+			return self.roll_standard_dice(command)
+		elif any(word in command for word in self.edge_dice.keys()):
+			return self.roll_edge_dice(command)
+
+	# roll normal dice, eg roll 2d20
+	def roll_standard_dice(self, command):
 		# make sure the command matches the necessary pattern
 		if len(re.findall("[0-9]{1,3}", command)) != 0:
 			#  a list of the digit groups in the command using a regular expression
@@ -99,11 +134,42 @@ class DiceRoller():
 				if  i != int(dice_no) - 1:
 					response += ", "
 			# return the response and the total
-			return bot_ability.choose_polite_prefix() + \
+			return bot_ability.choose_polite_prefix() + '\n' + \
 				   response + " = " + str(sum(result_list))
 		else:
 			return "Terribly sorry, sir, but that is an incorrect command."
  
+
+	def roll_edge_dice(self, command):
+		### TO DO:
+		### - Fix this absolutely idiotic code.
+		### - Cancel out the appropriate rolls (successes/failures, etc) and
+		###   deliver the total.
+		### - Show which dice are yielding which rolls.
+		# split the input into dice type and number each type is rolled
+ 		rolls = re.findall('\d \w*', command)
+ 		# split that into a list
+ 		roll_list = [s.split(' ') for s in rolls]
+ 		rolldict = {}
+ 		# turn the list into a dict with type:number pairs
+ 		rolldict.update({roll_list[i][1]:roll_list[i][0] for i in range(len(roll_list))})
+ 		response = 'Rolling: '
+ 		roll_results = []
+ 		total_results = []
+ 		for key, value in rolldict.items():
+ 			# get the die from the edge_dice dict
+ 			die = self.edge_dice[key]
+ 			for i in range(int(value)):
+	 			# generate a random roll
+	 			roll = random.randint(0, len(die) - 1)
+	 			roll_results.append(die[roll])
+	 			roll_results = (' '.join(roll_results).replace(',','')).split(' ')
+	 		count += 1
+	 	total_results += [str(roll_results.count(word)) + ' ' + word \
+	 						  for word in roll_results]
+	 	response = ', '.join((list(set(total_results))))
+ 		return bot_ability.choose_polite_prefix() + '\n' + "Rolled: " + response
+
 
 ## Class for the generator bot function
 class Generator():
